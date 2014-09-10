@@ -9,7 +9,7 @@
       category="Products"
       condition_expr=""
       url_expr="string:${portal_url}/@@civicrm-settings"
-      icon_expr="string:${portal_url}/++resource++collective.civicrm/frontpage_icon.png"
+      icon_expr="string:${portal_url}/++resource++collective.civicrm/civicrm.png"
       visible="True"
       i18n:attributes="title">
     <permission>collective.civicrm: Setup</permission>
