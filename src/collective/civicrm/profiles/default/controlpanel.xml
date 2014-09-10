@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<object name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="collective.civicrm"
+    purge="False">
+  <configlet title="CiviCRM"
+      action_id="civicrm"
+      appId="collective.civicrm"
+      category="Products"
+      condition_expr=""
+      url_expr="string:${portal_url}/@@civicrm-settings"
+      icon_expr="string:${portal_url}/++resource++collective.civicrm/frontpage_icon.png"
+      visible="True"
+      i18n:attributes="title">
+    <permission>collective.civicrm: Setup</permission>
+  </configlet>
+</object>
