@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="find-contacts"
+      permission="zope2.View"
+      class=".FindContactsView"
+      template="find_contacts.pt"
+      layer="..interfaces.IAddOnInstalled"
+      />
+
+</configure>

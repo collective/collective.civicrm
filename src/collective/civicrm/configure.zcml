@@ -25,4 +25,6 @@
       permission="collective.civicrm.Setup"
       />
 
+  <include package=".browser" />
+
 </configure>

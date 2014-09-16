@@ -1,0 +1,76 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="collective.civicrm">
+
+  <metal:block fill-slot="content">
+    <form action="find-contacts" method="post" name="" id="">
+      <div class="field">
+        <input class="" name="sort_name" id="sort_name" type="text" placeholder="Name or Email" i18n:attributes="placeholder"
+            tal:define="sort_name request/form/sort_name|nothing"
+            tal:attributes="value sort_name" />
+      </div>
+      <div class="field">
+        <label for="contact_type" i18n:translate="">is…</label>
+        <select class="" id="contact_type" name="contact_type">
+          <option value="" selected=""
+              tal:repeat="contact_type view/get_contact_types"
+              tal:attributes="value contact_type/value;
+                              selected contact_type/selected"
+              tal:content="contact_type/title" />
+        </select>
+      </div>
+      <div class="field">
+        <label for="group" i18n:translate="">in</label>
+        <select class="" id="group" name="group">
+          <option value="" selected=""
+              tal:repeat="group view/get_groups"
+              tal:attributes="value group/value;
+                              selected group/selected"
+              tal:content="group/title" />
+        </select>
+      </div>
+      <div class="field">
+        <label for="tag" i18n:translate="">with</label>
+        <select class="" id="tag" name="tag">
+          <option value="" selected=""
+              tal:repeat="tag view/get_tags"
+              tal:attributes="value tag/value;
+                              selected tag/selected"
+              tal:content="tag/title" />
+        </select>
+      </div>
+      <input class="" id="" name="" type="submit" value="Search" i18n:attributes="value">
+    </form>
+
+    <div id="search-results" tal:condition="view/show_results">
+      <tal:results condition="view/has_results">
+        <h2 i18n:translate=""><span tal:content="python:len(view.results())"/> results</h2>
+        <table class="listing">
+            <thead>
+              <tr>
+                <th class="column" i18n:translate="">Name</th>
+                <th class="column" i18n:translate="">City</th>
+                <th class="column" i18n:translate="">Email</th>
+                <th class="column" i18n:translate="">Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tal:repeat="contact view/results">
+                <td class="" tal:content="contact/sort_name" />
+                <td class="" tal:content="contact/city" />
+                <td class="" tal:content="contact/email" />
+                <td class="" tal:content="contact/phone" />
+              </tr>
+          </tbody>
+        </table>
+      </tal:results>
+      <tal:no_results condition="not:view/has_results">
+        <p><strong i18n:translate="">Query returned no results.</strong></p>
+      </tal:no_results>
+    </div>
+  </metal:block>
+
+</html>
