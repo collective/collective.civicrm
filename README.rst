@@ -57,7 +57,40 @@ Check the box next to ``collective.civicrm`` and click the 'Activate' button.
 
     You may have to empty your browser cache and save your resource registries in order to see the effects of the product installation.
 
+Before you begin
+----------------
+
+To use the CiviCRM integration you need the following information:
+
+- REST interface URL
+- Site key
+- Every user that will interact with CiviCRM needs an API key
+
+See `CiviCRM REST interface documentation`_ for more information on this.
+
+.. _`CiviCRM REST interface documentation`: http://wiki.civicrm.org/confluence/display/CRMDOC/REST+interface
+
 Usage
 -----
 
-TBD.
+After installing CiviCRM integration, go to the control panel configlet and set up the REST interface URL and site key.
+
+.. figure:: https://raw.github.com/collective/collective.civicrm/master/configlet.png
+    :align: center
+    :height: 640px
+    :width: 640px
+
+Set up the API key for all users that will use the CiviCRM integration.
+
+.. figure:: https://raw.github.com/collective/collective.civicrm/master/user.png
+    :align: center
+    :height: 640px
+    :width: 640px
+
+Go to the @@find-contacts view at the site root and start making searches.
+You can search for contacts by name or email, and you can filter the results by contact type, group and tag.
+
+.. figure:: https://raw.github.com/collective/collective.civicrm/master/search.png
+    :align: center
+    :height: 700px
+    :width: 640px
