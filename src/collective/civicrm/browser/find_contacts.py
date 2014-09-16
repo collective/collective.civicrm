@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from collective.civicrm.config import API_KEY
 from collective.civicrm.config import SITE_KEY_RECORD
 from collective.civicrm.config import TIMEOUT
 from collective.civicrm.config import URL_RECORD
@@ -26,7 +25,7 @@ class FindContactsView(BrowserView):
         self.tag = self.request.form.get('tag', None)
         url = api.portal.get_registry_record(URL_RECORD)
         site_key = api.portal.get_registry_record(SITE_KEY_RECORD)
-        api_key = API_KEY
+        api_key = api.user.get_current().getProperty('api_key')
         self.civicrm = CiviCRM(
             url, site_key, api_key, use_ssl=False, timeout=TIMEOUT)
         return self.render()

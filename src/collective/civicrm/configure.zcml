@@ -27,4 +27,10 @@
 
   <include package=".browser" />
 
+  <adapter
+      provides=".userdataschema.IEnhancedUserDataSchema"
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      factory=".adapters.EnhancedUserDataPanelAdapter"
+      />
+
 </configure>

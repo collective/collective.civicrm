@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<object name="portal_memberdata">
+  <property name="api_key" type="string" />
+</object>
