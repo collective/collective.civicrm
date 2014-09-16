@@ -112,9 +112,9 @@ class FindContactsView(BrowserView):
         tags = [dict(value=u'', selected=u'', title=u'- any tag -')]
         results = self.civicrm.get('Tag', limit=999)
         for tag in results:
-            selected = self.tag == tag['name']
+            selected = self.tag == tag['id']
             tags.append(dict(
-                value=tag['name'],
+                value=tag['id'],
                 selected=u'selected' if selected else u'',
                 title=tag['name'],
             ))
@@ -127,10 +127,17 @@ class FindContactsView(BrowserView):
         contacts = self.civicrm.get('GroupContact', group_id=group, limit=999)
         return [c['id'] for c in contacts]
 
+    @view.memoize
+    def get_contacts_with_tag(self, tag):
+        """Return the list of contacts with the tag."""
+        tag = int(tag)
+        contacts = self.civicrm.get('EntityTag', tag_id=tag, limit=999)
+        return [c['id'] for c in contacts]
+
     def filter_by_group(self, contact, group):
         """Return True if the contact is in the group."""
         return contact['id'] in self.get_contacts_by_group(group)
 
     def filter_by_tag(self, contact, tag):
-        """Return True if the contact is tagged."""
-        return True  # not yet implemented
+        """Return True if the contact has the tag."""
+        return contact['id'] in self.get_contacts_with_tag(tag)
