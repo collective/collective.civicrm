@@ -14,6 +14,7 @@ class ICiviCRMSettings(form.Schema):
 
     """Control panel form."""
 
+    form.widget('url', size=60)
     url = schema.TextLine(
         title=_(u'URL'),
         description=_(u'URL used for API calls using the REST interface.'),
