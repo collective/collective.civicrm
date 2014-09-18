@@ -6,6 +6,7 @@ from collective.civicrm.pythoncivicrm import CiviCRM
 from plone import api
 from plone.memoize import view
 from Products.Five.browser import BrowserView
+from urlparse import urlparse
 
 
 class FindContactsView(BrowserView):
@@ -26,8 +27,9 @@ class FindContactsView(BrowserView):
         url = api.portal.get_registry_record(URL_RECORD)
         site_key = api.portal.get_registry_record(SITE_KEY_RECORD)
         api_key = api.user.get_current().getProperty('api_key')
+        use_ssl = urlparse(url).scheme == 'https'
         self.civicrm = CiviCRM(
-            url, site_key, api_key, use_ssl=False, timeout=TIMEOUT)
+            url, site_key, api_key, use_ssl=use_ssl, timeout=TIMEOUT)
         return self.render()
 
     @property
