@@ -43,22 +43,21 @@ class FindContactsView(BrowserView):
         return len(self.results()) > 0
 
     @view.memoize
-    def results(self, limit=-1):
+    def results(self):
         """Return the contacts that fullfil the query specified.
         We just define a timeout for all operations and we do not
         handle any exception.
 
-        :param limit: Number of results to return; by default we return all
-        :type limit: int
         :returns: list of dictionaries with contact information
         :raises: ConnectionError
         """
-        results = self.civicrm.get(
-            'Contact',
-            sort_name=self.sort_name,
-            contact_type=self.contact_type,
-            limit=limit,
-        )
+        kwargs = {
+            'sort_name': self.sort_name,
+            'contact_type': self.contact_type,
+            'return': 'sort_name,city,email,phone',
+            'limit': 9999,
+        }
+        results = self.civicrm.get('Contact', **kwargs)
         # the API does not support filtering by group, nor by tag;
         # we have to deal with that here
         if self.group:
