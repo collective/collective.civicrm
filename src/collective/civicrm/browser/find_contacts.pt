@@ -6,7 +6,7 @@
     i18n:domain="collective.civicrm">
 
   <metal:block fill-slot="content">
-    <form action="find-contacts" method="post" name="" id="">
+    <form action="civicrm-find-contacts" method="post" name="" id="">
       <div class="field">
         <input class="" name="sort_name" id="sort_name" type="text" placeholder="Name or Email" i18n:attributes="placeholder"
             tal:define="sort_name request/form/sort_name|nothing"

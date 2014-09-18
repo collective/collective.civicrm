@@ -4,9 +4,9 @@
 
   <browser:page
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      name="find-contacts"
+      name="civicrm-find-contacts"
       permission="zope2.View"
-      class=".FindContactsView"
+      class=".find_contacts.FindContactsView"
       template="find_contacts.pt"
       layer="..interfaces.IAddOnInstalled"
       />

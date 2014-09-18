@@ -168,7 +168,6 @@ class FindContactsView(BrowserView):
                 'GroupContact', group_id=int(group), limit=999)
         logger.info(
             u'get GroupContact API call took {0:.2n}s'.format(t.elapsed_secs))
-
         return [c['contact_id'] for c in contacts]
 
     @ram.cache(lambda *args: time() // (60 * TTL))
@@ -179,7 +178,6 @@ class FindContactsView(BrowserView):
                 'EntityTag', tag_id=int(tag), limit=999)
         logger.info(
             u'get EntityTag API call took {0:.2n}s'.format(t.elapsed_secs))
-
         return [c['entity_id'] for c in contacts]
 
     def filter_by_group(self, contact, group):
