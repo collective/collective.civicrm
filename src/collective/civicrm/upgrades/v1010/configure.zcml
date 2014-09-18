@@ -5,28 +5,24 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.civicrm">
 
-  <!-- Profile -->
   <genericsetup:registerProfile
       name="default"
-      title="collective.civicrm: Versao 1010"
+      title="Update collective.civicrm to v1010"
       directory="profile"
-      description="Atualiza o pacote collective.civicrm para versao 1010"
+      description="Do something."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       i18n:attributes="title; description"
       />
 
-  <!-- Upgrade -->
   <genericsetup:upgradeSteps
       source="1000"
       destination="1010"
       profile="collective.civicrm:default">
-
-      <genericsetup:upgradeStep
-          title="Atualiza portal para versao 1010"
-          description="Aplica profile v1010."
-          handler=".handler.apply_profile"
-          />
-
+    <genericsetup:upgradeStep
+        title="Do something"
+        description="Some description of something."
+        handler=".handler.apply_profile"
+        />
   </genericsetup:upgradeSteps>
 
 </configure>
