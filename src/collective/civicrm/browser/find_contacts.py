@@ -126,14 +126,14 @@ class FindContactsView(BrowserView):
         """Return the list of contacts on a group."""
         group = int(group)
         contacts = self.civicrm.get('GroupContact', group_id=group, limit=999)
-        return [c['id'] for c in contacts]
+        return [c['contact_id'] for c in contacts]
 
     @view.memoize
     def get_contacts_with_tag(self, tag):
         """Return the list of contacts with the tag."""
         tag = int(tag)
         contacts = self.civicrm.get('EntityTag', tag_id=tag, limit=999)
-        return [c['id'] for c in contacts]
+        return [c['entity_id'] for c in contacts]
 
     def filter_by_group(self, contact, group):
         """Return True if the contact is in the group."""
