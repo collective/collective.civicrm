@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.config import SITE_KEY_RECORD
 from collective.civicrm.config import TIMEOUT
+from collective.civicrm.config import TTL
 from collective.civicrm.config import URL_RECORD
 from collective.civicrm.logger import logger
 from collective.civicrm.pythoncivicrm import CiviCRM
 from collective.civicrm.timer import Timer
 from plone import api
+from plone.memoize import ram
 from plone.memoize import view
 from Products.Five.browser import BrowserView
+from time import time
 from urlparse import urlparse
 
 
@@ -74,9 +77,9 @@ class FindContactsView(BrowserView):
             results = [i for i in results if self.filter_by_tag(i, self.tag)]
         return results
 
-    @view.memoize
-    def get_contact_types(self):
-        """Return the contact types available.
+    @ram.cache(lambda *args: time() // (60 * TTL))
+    def _get_contact_types(self):
+        """Return contact types available on the CiviCRM server.
 
         :returns: list of dictionaries with contact type information
         :raises: ConnectionError
@@ -87,20 +90,24 @@ class FindContactsView(BrowserView):
             results = self.civicrm.get('ContactType', limit=999)
         logger.info(
             u'get ContactType API call took {0:.2n}s'.format(t.elapsed_secs))
+        return results
 
-        contact_types = [dict(value=u'', selected=u'', title=u'- any contact types -')]
-        for ct in results:
+    def get_contact_type_options(self):
+        """Return contact type options to be used on the view template."""
+        contact_types_options = [
+            dict(value=u'', selected=u'', title=u'- any contact types -')]
+        for ct in self._get_contact_types():
             selected = self.contact_type == ct['name']
-            contact_types.append(dict(
+            contact_types_options.append(dict(
                 value=ct['name'],
                 selected=u'selected' if selected else u'',
                 title=ct['label'],
             ))
-        return contact_types
+        return contact_types_options
 
-    @view.memoize
-    def get_groups(self):
-        """Return the groups available.
+    @ram.cache(lambda *args: time() // (60 * TTL))
+    def _get_groups(self):
+        """Return groups available on the CiviCRM server.
 
         :returns: list of dictionaries with group information
         :raises: ConnectionError
@@ -111,9 +118,12 @@ class FindContactsView(BrowserView):
             results = self.civicrm.get('Group', limit=999)
         logger.info(
             u'get Group API call took {0:.2n}s'.format(t.elapsed_secs))
+        return results
 
+    def get_group_options(self):
+        """Return group options to be used on the view template."""
         groups = [dict(value=u'', selected=u'', title=u'- any group -')]
-        for group in results:
+        for group in self._get_groups():
             selected = self.group == group['id']
             groups.append(dict(
                 value=group['id'],
@@ -122,9 +132,9 @@ class FindContactsView(BrowserView):
             ))
         return groups
 
-    @view.memoize
-    def get_tags(self):
-        """Return the tags available.
+    @ram.cache(lambda *args: time() // (60 * TTL))
+    def _get_tags(self):
+        """Return tags available on the CiviCRM server.
 
         :returns: list of dictionaries with tags
         :raises: ConnectionError
@@ -134,9 +144,12 @@ class FindContactsView(BrowserView):
         with Timer() as t:
             results = self.civicrm.get('Tag', limit=999)
         logger.info(u'get Tag API call took {0:.2n}s'.format(t.elapsed_secs))
+        return results
 
+    def get_tag_options(self):
+        """Return tag options to be used on the view template."""
         tags = [dict(value=u'', selected=u'', title=u'- any tag -')]
-        for tag in results:
+        for tag in self._get_tags():
             selected = self.tag == tag['id']
             tags.append(dict(
                 value=tag['id'],
@@ -145,7 +158,7 @@ class FindContactsView(BrowserView):
             ))
         return tags
 
-    @view.memoize
+    @ram.cache(lambda *args: time() // (60 * TTL))
     def get_contacts_by_group(self, group):
         """Return the list of contacts on a group."""
         count = self.civicrm.getcount('GroupContact')
@@ -158,7 +171,7 @@ class FindContactsView(BrowserView):
 
         return [c['contact_id'] for c in contacts]
 
-    @view.memoize
+    @ram.cache(lambda *args: time() // (60 * TTL))
     def get_contacts_with_tag(self, tag):
         """Return the list of contacts with the tag."""
         with Timer() as t:

@@ -16,7 +16,7 @@
         <label for="contact_type" i18n:translate="">is…</label>
         <select class="" id="contact_type" name="contact_type">
           <option value="" selected=""
-              tal:repeat="contact_type view/get_contact_types"
+              tal:repeat="contact_type view/get_contact_type_options"
               tal:attributes="value contact_type/value;
                               selected contact_type/selected"
               tal:content="contact_type/title" />
@@ -26,7 +26,7 @@
         <label for="group" i18n:translate="">in</label>
         <select class="" id="group" name="group">
           <option value="" selected=""
-              tal:repeat="group view/get_groups"
+              tal:repeat="group view/get_group_options"
               tal:attributes="value group/value;
                               selected group/selected"
               tal:content="group/title" />
@@ -36,7 +36,7 @@
         <label for="tag" i18n:translate="">with</label>
         <select class="" id="tag" name="tag">
           <option value="" selected=""
-              tal:repeat="tag view/get_tags"
+              tal:repeat="tag view/get_tag_options"
               tal:attributes="value tag/value;
                               selected tag/selected"
               tal:content="tag/title" />
