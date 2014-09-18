@@ -2,7 +2,9 @@
 from collective.civicrm.config import SITE_KEY_RECORD
 from collective.civicrm.config import TIMEOUT
 from collective.civicrm.config import URL_RECORD
+from collective.civicrm.logger import logger
 from collective.civicrm.pythoncivicrm import CiviCRM
+from collective.civicrm.timer import Timer
 from plone import api
 from plone.memoize import view
 from Products.Five.browser import BrowserView
@@ -57,7 +59,13 @@ class FindContactsView(BrowserView):
             'return': 'sort_name,city,email,phone',
             'limit': 9999,
         }
-        results = self.civicrm.get('Contact', **kwargs)
+        count = self.civicrm.getcount('Contact')
+        logger.info(u'{0} Contact records in server'.format(count))
+        with Timer() as t:
+            results = self.civicrm.get('Contact', **kwargs)
+        logger.info(
+            u'get Contact API call took {0:.2n}s'.format(t.elapsed_secs))
+
         # the API does not support filtering by group, nor by tag;
         # we have to deal with that here
         if self.group:
@@ -73,8 +81,14 @@ class FindContactsView(BrowserView):
         :returns: list of dictionaries with contact type information
         :raises: ConnectionError
         """
+        count = self.civicrm.getcount('ContactType')
+        logger.info(u'{0} ContactType records in server'.format(count))
+        with Timer() as t:
+            results = self.civicrm.get('ContactType', limit=999)
+        logger.info(
+            u'get ContactType API call took {0:.2n}s'.format(t.elapsed_secs))
+
         contact_types = [dict(value=u'', selected=u'', title=u'- any contact types -')]
-        results = self.civicrm.get('ContactType', limit=999)
         for ct in results:
             selected = self.contact_type == ct['name']
             contact_types.append(dict(
@@ -91,8 +105,14 @@ class FindContactsView(BrowserView):
         :returns: list of dictionaries with group information
         :raises: ConnectionError
         """
+        count = self.civicrm.getcount('Group')
+        logger.info(u'{0} Group records in server'.format(count))
+        with Timer() as t:
+            results = self.civicrm.get('Group', limit=999)
+        logger.info(
+            u'get Group API call took {0:.2n}s'.format(t.elapsed_secs))
+
         groups = [dict(value=u'', selected=u'', title=u'- any group -')]
-        results = self.civicrm.get('Group', limit=999)
         for group in results:
             selected = self.group == group['id']
             groups.append(dict(
@@ -109,8 +129,13 @@ class FindContactsView(BrowserView):
         :returns: list of dictionaries with tags
         :raises: ConnectionError
         """
+        count = self.civicrm.getcount('Tag')
+        logger.info(u'{0} Tag records in server'.format(count))
+        with Timer() as t:
+            results = self.civicrm.get('Tag', limit=999)
+        logger.info(u'get Tag API call took {0:.2n}s'.format(t.elapsed_secs))
+
         tags = [dict(value=u'', selected=u'', title=u'- any tag -')]
-        results = self.civicrm.get('Tag', limit=999)
         for tag in results:
             selected = self.tag == tag['id']
             tags.append(dict(
@@ -123,15 +148,25 @@ class FindContactsView(BrowserView):
     @view.memoize
     def get_contacts_by_group(self, group):
         """Return the list of contacts on a group."""
-        group = int(group)
-        contacts = self.civicrm.get('GroupContact', group_id=group, limit=999)
+        count = self.civicrm.getcount('GroupContact')
+        logger.info(u'{0} GroupContact records in server'.format(count))
+        with Timer() as t:
+            contacts = self.civicrm.get(
+                'GroupContact', group_id=int(group), limit=999)
+        logger.info(
+            u'get GroupContact API call took {0:.2n}s'.format(t.elapsed_secs))
+
         return [c['contact_id'] for c in contacts]
 
     @view.memoize
     def get_contacts_with_tag(self, tag):
         """Return the list of contacts with the tag."""
-        tag = int(tag)
-        contacts = self.civicrm.get('EntityTag', tag_id=tag, limit=999)
+        with Timer() as t:
+            contacts = self.civicrm.get(
+                'EntityTag', tag_id=int(tag), limit=999)
+        logger.info(
+            u'get EntityTag API call took {0:.2n}s'.format(t.elapsed_secs))
+
         return [c['entity_id'] for c in contacts]
 
     def filter_by_group(self, contact, group):
