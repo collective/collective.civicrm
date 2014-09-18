@@ -11,4 +11,13 @@
       layer="..interfaces.IAddOnInstalled"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="civicrm-contact"
+      permission="zope2.View"
+      class=".contact.ContactView"
+      template="contact.pt"
+      layer="..interfaces.IAddOnInstalled"
+      />
+
 </configure>

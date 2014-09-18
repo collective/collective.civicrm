@@ -189,3 +189,7 @@ class FindContactsView(BrowserView):
     def filter_by_tag(self, contact, tag):
         """Return True if the contact has the tag."""
         return contact['id'] in self.get_contacts_with_tag(tag)
+
+    @property
+    def get_portal_url(self):
+        return api.portal.get().absolute_url()

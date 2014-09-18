@@ -59,7 +59,11 @@
             </thead>
             <tbody>
               <tr tal:repeat="contact view/results">
-                <td class="" tal:content="contact/sort_name" />
+                <td class="">
+                  <a href=""
+                      tal:attributes="href string:${view/get_portal_url}/civicrm-contact?contact_id=${contact/contact_id}"
+                      tal:content="contact/sort_name" />
+                </td>
                 <td class="" tal:content="contact/city" />
                 <td class="" tal:content="contact/email" />
                 <td class="" tal:content="contact/phone" />

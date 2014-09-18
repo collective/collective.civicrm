@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="collective.civicrm">
+<body>
+  <metal:block fill-slot="main">
+    <div itemscope itemtype="https://schema.org/Person">
+      <div tal:replace="structure provider:plone.abovecontenttitle" />
+      <h1 class="documentFirstHeading" itemprop="name"
+          tal:content="view/get_contact/sort_name" />
+
+      <div tal:replace="structure provider:plone.abovecontentbody" />
+      <div id="content-core">
+        <table class="vertical listing">
+          <tbody>
+            <tr>
+              <th i18n:translate="">Contact Type</th>
+              <td itemprop="" tal:content="view/get_contact/contact_type" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Groups</th>
+              <td itemprop="" tal:content="view/get_contact_groups" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Email</th>
+              <td itemprop="name" tal:content="view/get_contact/email" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Phone</th>
+              <td itemprop="phone" tal:content="view/get_contact/phone" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Employer</th>
+              <td itemprop="worksFor" tal:content="view/get_contact/current_employer" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Job Title</th>
+              <td itemprop="jobTitle" tal:content="view/get_contact/job_title" />
+            </tr>
+            <tr>
+              <th i18n:translate="">Address</th>
+              <td itemprop="address">
+                <span tal:content="view/get_contact/street_address" /><br />
+                <span tal:content="view/get_contact/city" /><br />
+                <span tal:content="view/get_contact/country" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div tal:replace="structure provider:plone.belowcontentbody" />
+    </div>
+  </metal:block>
+</body>
+</html>
