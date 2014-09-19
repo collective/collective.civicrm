@@ -77,7 +77,7 @@ class FindContactsView(BrowserView):
             results = [i for i in results if self.filter_by_tag(i, self.tag)]
         return results
 
-    @ram.cache(lambda *args: time() // (60 * TTL))
+    @ram.cache(lambda *args: time() // TTL)
     def _get_contact_types(self):
         """Return contact types available on the CiviCRM server.
 
@@ -105,7 +105,7 @@ class FindContactsView(BrowserView):
             ))
         return contact_types_options
 
-    @ram.cache(lambda *args: time() // (60 * TTL))
+    @ram.cache(lambda *args: time() // TTL)
     def _get_groups(self):
         """Return groups available on the CiviCRM server.
 
@@ -132,7 +132,7 @@ class FindContactsView(BrowserView):
             ))
         return groups
 
-    @ram.cache(lambda *args: time() // (60 * TTL))
+    @ram.cache(lambda *args: time() // TTL)
     def _get_tags(self):
         """Return tags available on the CiviCRM server.
 
@@ -158,7 +158,7 @@ class FindContactsView(BrowserView):
             ))
         return tags
 
-    @ram.cache(lambda *args: time() // (60 * TTL))
+    @ram.cache(lambda *args: time() // TTL)
     def get_contacts_by_group(self, group):
         """Return the list of contacts on a group."""
         count = self.civicrm.getcount('GroupContact')
@@ -170,7 +170,7 @@ class FindContactsView(BrowserView):
             u'get GroupContact API call took {0:.2n}s'.format(t.elapsed_secs))
         return [c['contact_id'] for c in contacts]
 
-    @ram.cache(lambda *args: time() // (60 * TTL))
+    @ram.cache(lambda *args: time() // TTL)
     def get_contacts_with_tag(self, tag):
         """Return the list of contacts with the tag."""
         with Timer() as t:
