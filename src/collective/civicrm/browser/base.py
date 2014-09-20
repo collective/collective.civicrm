@@ -37,3 +37,19 @@ class CiviCRMBaseView(BrowserView):
         use_ssl = urlparse(url).scheme == 'https'
         self.civicrm = CiviCRM(
             url, site_key, api_key, use_ssl=use_ssl, timeout=TIMEOUT)
+
+    @property
+    def _validate_contact_id(self):
+        """Return True if the contact_id from the request is valid.
+
+        :raises: Forbidden
+        """
+        id = self.request.form.get('contact_id', None)
+        if id is None:
+            raise Forbidden('contact_id was not set.')
+        else:
+            try:
+                id = int(id)
+            except ValueError:
+                raise Forbidden('contact_id is not an integer.')
+        return True

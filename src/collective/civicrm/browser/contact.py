@@ -23,7 +23,10 @@ class ContactView(CiviCRMBaseView):
 
         :returns: the page to be rendered
         """
-        self.contact_id = self.request.form.get('contact_id', None)
+        if not self._validate_contact_id:
+            return
+
+        self.contact_id = int(self.request.form.get('contact_id'))
         # open connection to CiviCRM server
         super(ContactView, self).__call__()
         return self.render()
