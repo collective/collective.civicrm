@@ -68,10 +68,8 @@ class BaseViewTestCase(unittest.TestCase):
 
 class FindContactsViewTestCase(BaseViewTestCase):
 
-    # FIXME: python-civicrm is not returning the results as expected
-    #        see: https://github.com/tallus/python-civicrm/issues/15
     @unittest.expectedFailure
-    def test_view(self):
+    def test_find_contacts_view(self):
         view = api.content.get_view(
             u'civicrm-find-contacts', self.portal, self.request)
         with HTTMock(civicrm_server):
@@ -80,10 +78,7 @@ class FindContactsViewTestCase(BaseViewTestCase):
 
 class ContactViewTestCase(BaseViewTestCase):
 
-    # FIXME: python-civicrm is not returning the results as expected
-    #        see: https://github.com/tallus/python-civicrm/issues/15
-    @unittest.expectedFailure
-    def test_view(self):
+    def test_contact_view(self):
         self.request.form['contact_id'] = '9'
         view = api.content.get_view(
             u'civicrm-contact', self.portal, self.request)
@@ -93,10 +88,7 @@ class ContactViewTestCase(BaseViewTestCase):
 
 class RelationshipsViewTestCase(BaseViewTestCase):
 
-    # FIXME: python-civicrm is not returning the results as expected
-    #        see: https://github.com/tallus/python-civicrm/issues/15
-    @unittest.expectedFailure
-    def test_view(self):
+    def test_relationships_view(self):
         self.request.form['contact_id'] = '200'
         view = api.content.get_view(
             u'civicrm-relationships', self.portal, self.request)
