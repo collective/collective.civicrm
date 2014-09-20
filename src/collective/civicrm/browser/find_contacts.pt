@@ -6,48 +6,49 @@
     i18n:domain="collective.civicrm">
 
   <metal:block fill-slot="content">
-    <form action="civicrm-find-contacts" method="post" name="" id="">
+    <form action="civicrm-find-contacts" method="post">
       <div class="field">
-        <input class="" name="sort_name" id="sort_name" type="text" placeholder="Name or Email" i18n:attributes="placeholder"
+        <input id="sort_name" name="sort_name" type="text" placeholder="Name or Email"
             tal:define="sort_name request/form/sort_name|nothing"
-            tal:attributes="value sort_name" />
+            tal:attributes="value sort_name"
+            i18n:attributes="placeholder" />
       </div>
       <div class="field">
         <label for="contact_type" i18n:translate="">is…</label>
-        <select class="" id="contact_type" name="contact_type">
+        <select id="contact_type" name="contact_type">
           <option value="" selected=""
-              tal:repeat="contact_type view/get_contact_type_options"
+              tal:repeat="contact_type view/contact_type_options"
+              tal:content="contact_type/title"
               tal:attributes="value contact_type/value;
-                              selected contact_type/selected"
-              tal:content="contact_type/title" />
+                              selected contact_type/selected" />
         </select>
       </div>
       <div class="field">
         <label for="group" i18n:translate="">in</label>
-        <select class="" id="group" name="group">
+        <select id="group" name="group">
           <option value="" selected=""
-              tal:repeat="group view/get_group_options"
+              tal:repeat="group view/group_options"
+              tal:content="group/title"
               tal:attributes="value group/value;
-                              selected group/selected"
-              tal:content="group/title" />
+                              selected group/selected" />
         </select>
       </div>
       <div class="field">
         <label for="tag" i18n:translate="">with</label>
-        <select class="" id="tag" name="tag">
+        <select id="tag" name="tag">
           <option value="" selected=""
-              tal:repeat="tag view/get_tag_options"
+              tal:repeat="tag view/tag_options"
+              tal:content="tag/title"
               tal:attributes="value tag/value;
-                              selected tag/selected"
-              tal:content="tag/title" />
+                              selected tag/selected" />
         </select>
       </div>
-      <input class="" id="" name="" type="submit" value="Search" i18n:attributes="value">
+      <input type="submit" value="Search" i18n:attributes="value">
     </form>
 
     <div id="search-results" tal:condition="view/show_results">
       <tal:results condition="view/has_results">
-        <h2 i18n:translate=""><span tal:content="python:len(view.results())"/> results</h2>
+        <h2 i18n:translate=""><span tal:content="python:len(view.results)"/> results</h2>
         <table class="listing">
             <thead>
               <tr>
@@ -61,8 +62,8 @@
               <tr tal:repeat="contact view/results">
                 <td class="">
                   <a href=""
-                      tal:attributes="href string:${view/get_portal_url}/civicrm-contact?contact_id=${contact/contact_id}"
-                      tal:content="contact/sort_name" />
+                      tal:content="contact/sort_name"
+                      tal:attributes="href string:civicrm-contact?contact_id=${contact/contact_id}" />
                 </td>
                 <td class="" tal:content="contact/city" />
                 <td class="" tal:content="contact/email" />

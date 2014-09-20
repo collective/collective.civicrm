@@ -31,7 +31,6 @@ class ContactView(CiviCRMBaseView):
         """Return a contact from the CiviCRM server.
 
         :returns: dictionary with contact information
-        :raises: ConnectionError
         """
         with Timer() as t:
             contact = self.civicrm.getsingle('Contact', contact_id=contact_id)
@@ -56,10 +55,10 @@ class ContactView(CiviCRMBaseView):
         :param contact_id: [required] the id of the contact to search for
         :type contact_ids: int
         :returns: list of group names
-        :raises: ConnectionError
         """
-        count = self.civicrm.getcount('GroupContact')
-        logger.info(u'{0} GroupContact records in server'.format(count))
+        if __debug__:
+            count = self.civicrm.getcount('GroupContact')
+            logger.info(u'{0} GroupContact records in server'.format(count))
         with Timer() as t:
             groups = self.civicrm.get(
                 'GroupContact', contact_id=contact_id, limit=999)
@@ -83,10 +82,10 @@ class ContactView(CiviCRMBaseView):
         :param contact_id: [required] the id of the contact to search for
         :type contact_ids: int
         :returns: list of dictionaries with relationship information
-        :raises: ConnectionError
         """
-        count = self.civicrm.getcount('Relationship')
-        logger.info(u'{0} Relationship records in server'.format(count))
+        if __debug__:
+            count = self.civicrm.getcount('Relationship')
+            logger.info(u'{0} Relationship records in server'.format(count))
         relationships = {}
         with Timer() as t:
             relationships['as_a'] = self.civicrm.get(
@@ -107,10 +106,10 @@ class ContactView(CiviCRMBaseView):
         """Return the relationship types on a CiviCRM server.
 
         :returns: list of dictionaries with relationship type information
-        :raises: ConnectionError
         """
-        count = self.civicrm.getcount('RelationshipType')
-        logger.info(u'{0} RelationshipType records in server'.format(count))
+        if __debug__:
+            count = self.civicrm.getcount('RelationshipType')
+            logger.info(u'{0} RelationshipType records in server'.format(count))
         with Timer() as t:
             types = self.civicrm.get('RelationshipType', limit=999)
         logger.info(
