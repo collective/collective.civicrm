@@ -1,20 +1,14 @@
 # -*- coding: utf-8 -*-
-from collective.civicrm.config import SITE_KEY_RECORD
-from collective.civicrm.config import TIMEOUT
+from collective.civicrm.browser.base import CiviCRMBaseView
 from collective.civicrm.config import TTL
-from collective.civicrm.config import URL_RECORD
 from collective.civicrm.logger import logger
-from collective.civicrm.pythoncivicrm import CiviCRM
 from collective.civicrm.timer import Timer
-from plone import api
 from plone.memoize import ram
 from plone.memoize import view
-from Products.Five.browser import BrowserView
 from time import time
-from urlparse import urlparse
 
 
-class FindContactsView(BrowserView):
+class FindContactsView(CiviCRMBaseView):
 
     """A page displaying a form to search for contacts on a CiviCRM server."""
 
@@ -23,18 +17,18 @@ class FindContactsView(BrowserView):
         return self.index()
 
     def __call__(self):
-        """Initialize internal variables and open the connection to the
-        CiviCRM server."""
+        """Open the connection to the CiviCRM server and initialize
+        internal variables.
+
+        :returns: the page to be rendered
+        """
+        # open connection to CiviCRM server
+        super(FindContactsView, self).__call__()
+        # get variables used to display results
         self.sort_name = self.request.form.get('sort_name', None)
         self.contact_type = self.request.form.get('contact_type', None)
         self.group = self.request.form.get('group', None)
         self.tag = self.request.form.get('tag', None)
-        url = api.portal.get_registry_record(URL_RECORD)
-        site_key = api.portal.get_registry_record(SITE_KEY_RECORD)
-        api_key = api.user.get_current().getProperty('api_key')
-        use_ssl = urlparse(url).scheme == 'https'
-        self.civicrm = CiviCRM(
-            url, site_key, api_key, use_ssl=use_ssl, timeout=TIMEOUT)
         return self.render()
 
     @property
