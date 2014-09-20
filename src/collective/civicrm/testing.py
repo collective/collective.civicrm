@@ -16,8 +16,7 @@ class Fixture(PloneSandboxLayer):
         self.loadZCML(package=collective.civicrm)
 
     def setUpPloneSite(self, portal):
-        self.applyProfile(
-            portal, 'collective.civicrm:default')
+        self.applyProfile(portal, 'collective.civicrm:default')
 
 
 FIXTURE = Fixture()

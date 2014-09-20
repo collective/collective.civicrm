@@ -1,0 +1,18 @@
+{
+	"is_error":0,
+	"undefined_fields":["contact_id_b"],
+	"version":3,
+	"count":1,
+	"id":5,
+	"values":{
+		"5":{
+			"id":"5",
+			"contact_id_a":"125",
+			"contact_id_b":"200",
+			"relationship_type_id":"4",
+			"is_active":"1",
+			"is_permission_a_b":"0",
+			"is_permission_b_a":"0"
+		}
+	}
+}
