@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
+from collective.civicrm.config import DEBUG
 from collective.civicrm.config import TTL
 from collective.civicrm.logger import logger
 from collective.civicrm.timer import Timer
@@ -56,7 +57,7 @@ class ContactView(CiviCRMBaseView):
         :type contact_ids: int
         :returns: list of group names
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('GroupContact')
             logger.info(u'{0} GroupContact records in server'.format(count))
         with Timer() as t:
@@ -83,7 +84,7 @@ class ContactView(CiviCRMBaseView):
         :type contact_ids: int
         :returns: list of dictionaries with relationship information
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('Relationship')
             logger.info(u'{0} Relationship records in server'.format(count))
         relationships = {}
@@ -107,7 +108,7 @@ class ContactView(CiviCRMBaseView):
 
         :returns: list of dictionaries with relationship type information
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('RelationshipType')
             logger.info(u'{0} RelationshipType records in server'.format(count))
         with Timer() as t:

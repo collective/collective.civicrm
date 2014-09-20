@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
+from collective.civicrm.config import DEBUG
 from collective.civicrm.config import TTL
 from collective.civicrm.logger import logger
 from collective.civicrm.timer import Timer
@@ -71,7 +72,7 @@ class FindContactsView(CiviCRMBaseView):
             'return': 'sort_name,city,email,phone',
             'limit': 9999,
         }
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('Contact')
             logger.info(u'{0} Contact records in server'.format(count))
         with Timer() as t:
@@ -93,7 +94,7 @@ class FindContactsView(CiviCRMBaseView):
 
         :returns: list of dictionaries with contact type information
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('ContactType')
             logger.info(u'{0} ContactType records in server'.format(count))
         with Timer() as t:
@@ -128,7 +129,7 @@ class FindContactsView(CiviCRMBaseView):
 
         :returns: list of dictionaries with group information
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('Group')
             logger.info(u'{0} Group records in server'.format(count))
         with Timer() as t:
@@ -162,7 +163,7 @@ class FindContactsView(CiviCRMBaseView):
 
         :returns: list of dictionaries with tags
         """
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('Tag')
             logger.info(u'{0} Tag records in server'.format(count))
         with Timer() as t:
@@ -192,7 +193,7 @@ class FindContactsView(CiviCRMBaseView):
     @ram.cache(lambda method, self, group: (time() // TTL, group))
     def get_contacts_by_group(self, group):
         """Return the list of contacts on a group."""
-        if __debug__:
+        if DEBUG:
             count = self.civicrm.getcount('GroupContact')
             logger.info(u'{0} GroupContact records in server'.format(count))
         with Timer() as t:
