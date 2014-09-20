@@ -1,0 +1,26 @@
+{
+	"is_error":0,
+	"undefined_fields":["contact_id"],
+	"version":3,
+	"count":2,
+	"values":{
+		"76":{
+			"id":"76",
+			"group_id":"4",
+			"title":"Advisory Board",
+			"visibility":"Public Pages",
+			"is_hidden":"0",
+			"in_date":"2013-07-14 08:48:57",
+			"in_method":"Email"
+		},
+		"1":{
+			"id":"1",
+			"group_id":"2",
+			"title":"Newsletter Subscribers",
+			"visibility":"Public Pages",
+			"is_hidden":"0",
+			"in_date":"2013-02-25 09:10:15",
+			"in_method":"Email"
+		}
+	}
+}
