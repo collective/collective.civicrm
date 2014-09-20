@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="collective.civicrm">
+<body>
+  <metal:block fill-slot="main">
+    <table class="listing" tal:condition="view/has_relationships">
+      <thead>
+        <tr>
+          <th i18n:translate="">Relationship</th>
+          <th></th>
+          <th i18n:translate="">City</th>
+          <th i18n:translate="">Email</th>
+          <th i18n:translate="">Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="relation view/relationships">
+          <td tal:content="relation/relationship_type" />
+          <td>
+            <a href="" tal:content="relation/sort_name"
+                tal:attributes="href string:civicrm-contact?contact_id=${relation/id}"
+                />
+          </td>
+          <td tal:content="relation/city" />
+          <td tal:content="relation/email" />
+          <td tal:content="relation/phone" />
+        </tr>
+      </tbody>
+    </table>
+    <p tal:condition="not:view/has_relationships">
+      <strong i18n:translate="">Contact has no relationships.</strong>
+    </p>
+  </metal:block>
+</body>
+</html>

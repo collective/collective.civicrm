@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.config import SITE_KEY_RECORD
 from collective.civicrm.config import TIMEOUT
+from collective.civicrm.config import TTL
 from collective.civicrm.config import URL_RECORD
+from collective.civicrm.logger import logger
 from collective.civicrm.pythoncivicrm import CiviCRM
+from collective.civicrm.timer import Timer
 from plone import api
+from plone.memoize import ram
 from Products.Five.browser import BrowserView
+from time import time
 from urlparse import urlparse
 from zExceptions import Forbidden
 
@@ -53,3 +58,21 @@ class CiviCRMBaseView(BrowserView):
             except ValueError:
                 raise Forbidden('contact_id is not an integer.')
         return True
+
+    def _get_contact(self, contact_id):
+        """Return a contact from a CiviCRM server.
+
+        :param contact_id: [required] the id of the contact to search for
+        :type contact_ids: int
+        :returns: dictionary with contact information
+        """
+        with Timer() as t:
+            contact = self.civicrm.getsingle('Contact', contact_id=contact_id)
+        logger.info(
+            u'getsingle Contact API call took {0:.2n}s'.format(t.elapsed_secs))
+        return contact
+
+    @ram.cache(lambda method, self, contact_id: (time() // TTL, contact_id))
+    def get_contact(self, contact_id):
+        """Cached version of the _get_contact() function."""
+        return self._get_contact(contact_id)

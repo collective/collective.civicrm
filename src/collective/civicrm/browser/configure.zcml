@@ -20,4 +20,13 @@
       layer="..interfaces.IAddOnInstalled"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="civicrm-relationships"
+      permission="zope2.View"
+      class=".relationships.RelationshipsView"
+      template="relationships.pt"
+      layer="..interfaces.IAddOnInstalled"
+      />
+
 </configure>

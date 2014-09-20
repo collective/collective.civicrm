@@ -49,31 +49,11 @@
             </tr>
           </tbody>
         </table>
-
-        <table class="listing" tal:condition="view/has_relationships">
-          <thead>
-            <tr>
-              <th i18n:translate="">Relationship</th>
-              <th></th>
-              <th i18n:translate="">City</th>
-              <th i18n:translate="">Email</th>
-              <th i18n:translate="">Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr tal:repeat="relation view/relationships">
-              <td tal:content="relation/relationship_type" />
-              <td>
-                <a href="" tal:content="relation/sort_name"
-                    tal:attributes="href string:civicrm-contact?contact_id=${relation/id}"
-                    />
-              </td>
-              <td tal:content="relation/city" />
-              <td tal:content="relation/email" />
-              <td tal:content="relation/phone" />
-            </tr>
-          </tbody>
-        </table>
+        <div id="relationships">
+          <a href=""
+              tal:attributes="href string:civicrm-relationships?contact_id=${request/contact_id}"
+              i18n:translate="">Relationships</a>
+        </div>
       </div>
       <div tal:replace="structure provider:plone.belowcontentbody" />
     </div>
