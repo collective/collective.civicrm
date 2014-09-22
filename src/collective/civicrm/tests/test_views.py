@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from collective.civicrm.browser.base import CiviCRMBaseView
 from collective.civicrm.interfaces import IAddOnInstalled
 from collective.civicrm.testing import INTEGRATION_TESTING
 from httmock import all_requests
 from httmock import HTTMock
 from plone import api
 from urlparse import parse_qs
+from zExceptions import Forbidden
 from zope.interface import alsoProvides
 
 import os
@@ -23,6 +25,13 @@ def civicrm_server(url, request):
     query = parse_qs(url.query)
     if is_rest_call('getsingle', 'Contact'):
         json = 'getsingle_contact_{0}.json'.format(query['contact_id'][0])
+    elif is_rest_call('get', 'Contact'):
+        if 'sort_name' in query:
+            json = 'get_contact_sort_name.json'
+        elif 'contact_type' in query:
+            json = 'get_contact_contact_type.json'
+        else:
+            return
     elif is_rest_call('get', 'ContactType'):
         json = 'get_contacttype.json'
     elif is_rest_call('get', 'Group'):
@@ -59,7 +68,7 @@ def configure_rest_api():
     user.setMemberProperties(mapping={'api_key': '123456'})
 
 
-class BaseViewTestCase(unittest.TestCase):
+class ViewTestCase(unittest.TestCase):
 
     layer = INTEGRATION_TESTING
 
@@ -70,16 +79,63 @@ class BaseViewTestCase(unittest.TestCase):
         configure_rest_api()
 
 
-class FindContactsViewTestCase(BaseViewTestCase):
+class BaseViewTestCase(ViewTestCase):
+
+    def setUp(self):
+        super(BaseViewTestCase, self).setUp()
+        self.view = CiviCRMBaseView(None, self.request)
+
+    def test_view_no_api_key(self):
+        user = api.user.get_current()
+        user.setMemberProperties(mapping={'api_key': ''})
+        with self.assertRaises(Forbidden):
+            self.view()
+
+    def test_view_no_id(self):
+        with self.assertRaises(Forbidden):
+            self.view._validate_contact_id()
+
+    def test_view_invalid_id(self):
+        self.request.form['contact_id'] = 'foo'
+        with self.assertRaises(Forbidden):
+            self.view._validate_contact_id()
+
+
+class FindContactsViewTestCase(ViewTestCase):
+
+    def setUp(self):
+        super(FindContactsViewTestCase, self).setUp()
+        self.view = api.content.get_view(
+            u'civicrm-find-contacts', self.portal, self.request)
 
     def test_find_contacts_view(self):
-        view = api.content.get_view(
-            u'civicrm-find-contacts', self.portal, self.request)
         with HTTMock(civicrm_server):
-            view()
+            self.view()
+
+    def test_find_contacts_view_sort_name(self):
+        self.request.form['sort_name'] = 'jinajameson10@example.org'
+        with HTTMock(civicrm_server):
+            self.view()
+
+    def test_find_contacts_view_contact_type(self):
+        self.request.form['contact_type'] = 'jinajameson10@example.org'
+        with HTTMock(civicrm_server):
+            self.view()
+
+    def test_find_contacts_view_group(self):
+        self.request.form['group'] = '4'
+        with HTTMock(civicrm_server):
+            self.view()
+            self.view.render()
+
+    def test_find_contacts_view_tag(self):
+        self.request.form['tag'] = '2'
+        with HTTMock(civicrm_server):
+            self.view()
+            self.view.render()
 
 
-class ContactViewTestCase(BaseViewTestCase):
+class ContactViewTestCase(ViewTestCase):
 
     def test_contact_view(self):
         self.request.form['contact_id'] = '9'
@@ -89,7 +145,7 @@ class ContactViewTestCase(BaseViewTestCase):
             view()
 
 
-class RelationshipsViewTestCase(BaseViewTestCase):
+class RelationshipsViewTestCase(ViewTestCase):
 
     def test_relationships_view(self):
         self.request.form['contact_id'] = '200'
