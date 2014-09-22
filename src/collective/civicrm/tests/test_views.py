@@ -26,25 +26,32 @@ def civicrm_server(url, request):
     if is_rest_call('getsingle', 'Contact'):
         json = 'getsingle_contact_{0}.json'.format(query['contact_id'][0])
     elif is_rest_call('get', 'Contact'):
-        if 'sort_name' in query:
+        if query.get('sort_name', False):
             json = 'get_contact_sort_name.json'
-        elif 'contact_type' in query:
+        elif query.get('contact_type', False):
             json = 'get_contact_contact_type.json'
         else:
-            return
+            json = 'get_contact.json'
     elif is_rest_call('get', 'ContactType'):
         json = 'get_contacttype.json'
     elif is_rest_call('get', 'Group'):
         json = 'get_group.json'
+    elif is_rest_call('get', 'EntityTag'):
+        json = 'get_entitytag.json'
     elif is_rest_call('get', 'GroupContact'):
-        json = 'get_groupcontact_9.json'
+        if query.get('group_id', False):
+            json = 'get_groupcontact_group_4.json'
+        elif query.get('contact_id', False):
+            json = 'get_groupcontact_contact_9.json'
+        else:
+            return  # this will make python-civicrm fail
     elif is_rest_call('get', 'Relationship'):
         if 'contact_id_a' in query:
             json = 'get_relationship_a_200.json'
         elif 'contact_id_b' in query:
             json = 'get_relationship_b_200.json'
         else:
-            return
+            return  # this will make python-civicrm fail
     elif is_rest_call('get', 'RelationshipType'):
         json = 'get_relationshiptype.json'
     elif is_rest_call('get', 'Tag'):
@@ -116,23 +123,25 @@ class FindContactsViewTestCase(ViewTestCase):
         self.request.form['sort_name'] = 'jinajameson10@example.org'
         with HTTMock(civicrm_server):
             self.view()
+            self.assertEqual(len(self.view.results), 1)
 
     def test_find_contacts_view_contact_type(self):
-        self.request.form['contact_type'] = 'jinajameson10@example.org'
+        self.request.form['contact_type'] = 'Organization'
         with HTTMock(civicrm_server):
             self.view()
+            self.assertEqual(len(self.view.results), 21)
 
     def test_find_contacts_view_group(self):
         self.request.form['group'] = '4'
         with HTTMock(civicrm_server):
             self.view()
-            self.view.render()
+            self.assertEqual(len(self.view.results), 8)
 
     def test_find_contacts_view_tag(self):
         self.request.form['tag'] = '2'
         with HTTMock(civicrm_server):
             self.view()
-            self.view.render()
+            self.assertEqual(len(self.view.results), 4)
 
 
 class ContactViewTestCase(ViewTestCase):

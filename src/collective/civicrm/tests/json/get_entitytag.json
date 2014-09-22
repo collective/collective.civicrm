@@ -1,0 +1,30 @@
+{
+	"is_error":0,
+	"undefined_fields":["entity_table","tag_id"],
+	"version":3,
+	"count":4,
+	"values":[{
+		"id":"3",
+		"entity_table":"civicrm_contact",
+		"entity_id":"156",
+		"tag_id":"2"
+	},
+	{
+		"id":"7",
+		"entity_table":"civicrm_contact",
+		"entity_id":"47",
+		"tag_id":"2"
+	},
+	{
+		"id":"9",
+		"entity_table":"civicrm_contact",
+		"entity_id":"44",
+		"tag_id":"2"
+	},
+	{
+		"id":"10",
+		"entity_table":"civicrm_contact",
+		"entity_id":"126",
+		"tag_id":"2"
+	}]
+}
