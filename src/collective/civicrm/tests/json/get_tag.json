@@ -1,0 +1,50 @@
+{
+	"is_error":0,
+	"version":3,
+	"count":5,
+	"values":[{
+		"id":"1",
+		"name":"Non-profit",
+		"description":"Any not-for-profit organization.",
+		"is_selectable":"1",
+		"is_reserved":"0",
+		"is_tagset":"0",
+		"used_for":"civicrm_contact"
+	},
+	{
+		"id":"2",
+		"name":"Company",
+		"description":"For-profit organization.",
+		"is_selectable":"1",
+		"is_reserved":"0",
+		"is_tagset":"0",
+		"used_for":"civicrm_contact"
+	},
+	{
+		"id":"3",
+		"name":"Government Entity",
+		"description":"Any governmental entity.",
+		"is_selectable":"1",
+		"is_reserved":"0",
+		"is_tagset":"0",
+		"used_for":"civicrm_contact"
+	},
+	{
+		"id":"4",
+		"name":"Major Donor",
+		"description":"High-value supporter of our organization.",
+		"is_selectable":"1",
+		"is_reserved":"0",
+		"is_tagset":"0",
+		"used_for":"civicrm_contact"
+	},
+	{
+		"id":"5",
+		"name":"Volunteer",
+		"description":"Active volunteers.",
+		"is_selectable":"1",
+		"is_reserved":"0",
+		"is_tagset":"0",
+		"used_for":"civicrm_contact"
+	}]
+}

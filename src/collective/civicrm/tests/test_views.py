@@ -25,6 +25,8 @@ def civicrm_server(url, request):
         json = 'getsingle_contact_{0}.json'.format(query['contact_id'][0])
     elif is_rest_call('get', 'ContactType'):
         json = 'get_contacttype.json'
+    elif is_rest_call('get', 'Group'):
+        json = 'get_group.json'
     elif is_rest_call('get', 'GroupContact'):
         json = 'get_groupcontact_9.json'
     elif is_rest_call('get', 'Relationship'):
@@ -36,6 +38,8 @@ def civicrm_server(url, request):
             return
     elif is_rest_call('get', 'RelationshipType'):
         json = 'get_relationshiptype.json'
+    elif is_rest_call('get', 'Tag'):
+        json = 'get_tag.json'
     else:
         return  # this will make python-civicrm fail
 
@@ -68,7 +72,6 @@ class BaseViewTestCase(unittest.TestCase):
 
 class FindContactsViewTestCase(BaseViewTestCase):
 
-    @unittest.expectedFailure
     def test_find_contacts_view(self):
         view = api.content.get_view(
             u'civicrm-find-contacts', self.portal, self.request)
