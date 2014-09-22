@@ -22,7 +22,7 @@ def civicrm_server(url, request):
     path = os.path.abspath(os.path.dirname(__file__)) + '/json/'
     query = parse_qs(url.query)
     if is_rest_call('getsingle', 'Contact'):
-        json = 'getsingle_contact_9.json'
+        json = 'getsingle_contact_{0}.json'.format(query['contact_id'][0])
     elif is_rest_call('get', 'ContactType'):
         json = 'get_contacttype.json'
     elif is_rest_call('get', 'GroupContact'):
@@ -88,7 +88,6 @@ class ContactViewTestCase(BaseViewTestCase):
 
 class RelationshipsViewTestCase(BaseViewTestCase):
 
-    @unittest.expectedFailure
     def test_relationships_view(self):
         self.request.form['contact_id'] = '200'
         view = api.content.get_view(
