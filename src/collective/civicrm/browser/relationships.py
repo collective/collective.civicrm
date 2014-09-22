@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
 from collective.civicrm.config import DEBUG
+from collective.civicrm.config import THREADS
 from collective.civicrm.config import TTL
 from collective.civicrm.logger import logger
 from collective.civicrm.timer import Timer
+from gevent.threadpool import ThreadPool
 from plone.memoize import ram
 from plone.memoize import view
 from time import time
+
+import gevent
 
 
 class RelationshipsView(CiviCRMBaseView):
@@ -43,30 +47,7 @@ class RelationshipsView(CiviCRMBaseView):
         solved.
         """
         relationships = self.get_relationships_by_contact(self.contact_id)
-        types = self.get_relationship_types
-        results = []
-        # TODO: refactor this uggly code
-        for r in relationships['as_a']:
-            type_id = int(r['relationship_type_id']) - 1
-            r['relationship_type'] = types[type_id]['label_a_b']
-            related = self.get_contact(r['contact_id_b'])
-            r['id'] = related['contact_id']
-            r['sort_name'] = related['sort_name']
-            r['city'] = related['city']
-            r['email'] = related['email']
-            r['phone'] = related['phone']
-            results.append(r)
-        for r in relationships['as_b']:
-            type_id = int(r['relationship_type_id']) - 1
-            r['relationship_type'] = types[type_id]['label_b_a']
-            related = self.get_contact(r['contact_id_a'])
-            r['id'] = related['contact_id']
-            r['sort_name'] = related['sort_name']
-            r['city'] = related['city']
-            r['email'] = related['email']
-            r['phone'] = related['phone']
-            results.append(r)
-        return results
+        return self._resolve_relationships(relationships)
 
     def _get_relationships_by_contact(self, contact_id):
         """Return a dictionary with 2 lists of active relationships of
@@ -76,7 +57,7 @@ class RelationshipsView(CiviCRMBaseView):
         calls to the CiviCRM API.
 
         :param contact_id: [required] the id of the contact to search for
-        :type contact_ids: int
+        :type contact_id: int
         :returns: list of dictionaries with relationship information
         """
         if DEBUG:
@@ -84,9 +65,9 @@ class RelationshipsView(CiviCRMBaseView):
             logger.info(u'{0} Relationship records in server'.format(count))
         relationships = {}
         with Timer() as t:
-            relationships['as_a'] = self.civicrm.get(
+            relationships = self.civicrm.get(
                 'Relationship', contact_id_a=contact_id, is_active=1, limit=999)
-            relationships['as_b'] = (self.civicrm.get(
+            relationships.extend(self.civicrm.get(
                 'Relationship', contact_id_b=contact_id, is_active=1, limit=999))
         logger.info(
             u'2 get Relationship API calls took {0:.2n}s'.format(t.elapsed_secs))
@@ -117,3 +98,55 @@ class RelationshipsView(CiviCRMBaseView):
     def get_relationship_types(self):
         """Cached version of _get_relationship_types() function."""
         return self._get_relationship_types
+
+    def _get_related_contacts(self, relationships):
+        """Return a list of related contacts from a CiviCRM server.
+        Run the API calls concurrently to speed up the process.
+
+        :param relationships: [required] relationship information of the
+            selected contact
+        :type relationships: list of dictionaries with relationship
+            information
+        :returns: dictionary with contact information dictionaries
+        """
+        contacts = []
+        for r in relationships:
+            if int(r['contact_id_a']) == self.contact_id:
+                contacts.append(r['contact_id_b'])
+            elif int(r['contact_id_b']) == self.contact_id:
+                contacts.append(r['contact_id_a'])
+        pool = ThreadPool(THREADS)
+        contacts = [pool.spawn(self.get_contact, c) for c in contacts]
+        gevent.wait()
+        contacts = [c.get() for c in contacts]
+        # make mapping easier by returning contact_id as dictionary key
+        return dict([(c['contact_id'], c) for c in contacts])
+
+    def _resolve_relationships(self, relationships):
+        """Resolve the contact relationships by mapping correctly the
+        labels and contact ids.
+
+        :param relationships: [required] relationship information of the
+            selected contact
+        :type relationships: list of dictionaries with relationship
+            information
+        :returns: list of related contact information dictionaries
+        """
+        types = self.get_relationship_types
+        contacts = self._get_related_contacts(relationships)
+        results = []
+        for r in relationships:
+            type_id = int(r['relationship_type_id']) - 1
+            if int(r['contact_id_a']) == self.contact_id:
+                r['relationship_type'] = types[type_id]['label_a_b']
+                contact = contacts[r['contact_id_b']]
+            elif int(r['contact_id_b']) == self.contact_id:
+                r['relationship_type'] = types[type_id]['label_b_a']
+                contact = contacts[r['contact_id_a']]
+            r['id'] = contact['contact_id']
+            r['sort_name'] = contact['sort_name']
+            r['city'] = contact['city']
+            r['email'] = contact['email']
+            r['phone'] = contact['phone']
+            results.append(r)
+        return results
