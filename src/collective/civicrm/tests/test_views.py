@@ -43,15 +43,11 @@ def civicrm_server(url, request):
             json = 'get_groupcontact_group_4.json'
         elif query.get('contact_id', False):
             json = 'get_groupcontact_contact_9.json'
-        else:
-            return  # this will make python-civicrm fail
     elif is_rest_call('get', 'Relationship'):
         if 'contact_id_a' in query:
             json = 'get_relationship_a_200.json'
         elif 'contact_id_b' in query:
             json = 'get_relationship_b_200.json'
-        else:
-            return  # this will make python-civicrm fail
     elif is_rest_call('get', 'RelationshipType'):
         json = 'get_relationshiptype.json'
     elif is_rest_call('get', 'Tag'):
@@ -152,6 +148,9 @@ class ContactViewTestCase(ViewTestCase):
             u'civicrm-contact', self.portal, self.request)
         with HTTMock(civicrm_server):
             view()
+            self.assertEqual(view.contact['display_name'], u'Jina Jameson')
+            self.assertEqual(
+                view.groups, u'Advisory Board, Newsletter Subscribers')
 
 
 class RelationshipsViewTestCase(ViewTestCase):
@@ -162,3 +161,4 @@ class RelationshipsViewTestCase(ViewTestCase):
             u'civicrm-relationships', self.portal, self.request)
         with HTTMock(civicrm_server):
             view()
+            self.assertEqual(len(view.relationships), 5)
