@@ -4,6 +4,16 @@
     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
     metal:use-macro="context/main_template/macros/master"
     i18n:domain="collective.civicrm">
+<head>
+  <metal:css fill-slot="style_slot">
+    <style type="text/css">
+        .spinner {
+            background: url('++resource++collective.civicrm/spinner.gif') no-repeat center right;
+            padding-right: 20px;
+        }
+    </style>
+  </metal:css>
+</head>
 <body>
   <metal:block fill-slot="main" tal:define="contact view/contact">
     <div itemscope itemtype="https://schema.org/Person">
@@ -52,8 +62,21 @@
         <div id="relationships">
           <a href=""
               tal:attributes="href string:civicrm-relationships?contact_id=${request/contact_id}"
-              i18n:translate="">Relationships</a>
+              i18n:translate="">Relationships</a><span><!-- spinner --></span>
         </div>
+        <script>
+            function getParameterByName(name) {
+                "use strict";
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
+            $("#relationships span").addClass("spinner");
+            var contact_id = getParameterByName("contact_id");
+            $("#relationships").load("civicrm-relationships #content table", {contact_id: contact_id});
+        </script>
       </div>
       <div tal:replace="structure provider:plone.belowcontentbody" />
     </div>
