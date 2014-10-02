@@ -87,10 +87,25 @@ Set up the API key for all users that will use the CiviCRM integration.
     :height: 640px
     :width: 640px
 
-Go to the @@civicrm-find-contacts view at the site root and start making searches.
+Go to the ``@@civicrm-find-contacts`` view at the site root and start making searches.
 You can search for contacts by name or email, and you can filter the results by contact type, group and tag.
 
 .. figure:: https://raw.github.com/collective/collective.civicrm/master/search.png
+    :align: center
+    :height: 700px
+    :width: 640px
+
+You can select any contact from the results to see his details.
+After a few seconds you will also see the relationships of the contact.
+
+.. figure:: https://raw.github.com/collective/collective.civicrm/master/contact.png
+    :align: center
+    :height: 700px
+    :width: 640px
+
+You can also select any contact from the relationships list for more details.
+
+.. figure:: https://raw.github.com/collective/collective.civicrm/master/relations.png
     :align: center
     :height: 700px
     :width: 640px
