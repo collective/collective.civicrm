@@ -162,3 +162,15 @@ class RelationshipsViewTestCase(ViewTestCase):
         with HTTMock(civicrm_server):
             view()
             self.assertEqual(len(view.relationships), 5)
+
+
+class ActivitiesViewTestCase(ViewTestCase):
+
+    @unittest.expectedFailure
+    def test_activitiess_view(self):
+        self.request.form['contact_id'] = '200'
+        view = api.content.get_view(
+            u'civicrm-activities', self.portal, self.request)
+        with HTTMock(civicrm_server):
+            view()
+            self.assertEqual(len(view.activities), 5)

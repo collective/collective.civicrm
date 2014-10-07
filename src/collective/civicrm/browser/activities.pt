@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="collective.civicrm">
+<body>
+  <metal:block fill-slot="main">
+    <table class="listing" tal:condition="view/has_activities">
+      <thead>
+        <tr>
+          <th i18n:translate="">Type</th>
+          <th i18n:translate="">Subject</th>
+          <th i18n:translate="">Added By</th>
+          <th i18n:translate="">With</th>
+          <th i18n:translate="">Date</th>
+          <th i18n:translate="">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="activity view/activities">
+          <td tal:content="activity/activity_name" />
+          <td tal:content="activity/subject" />
+          <td tal:content="python:view.source(activity)" />
+          <td tal:content="python:view.targets(activity)" />
+          <td tal:content="activity/activity_date_time" />
+          <td tal:content="activity/status" />
+        </tr>
+      </tbody>
+    </table>
+    <p tal:condition="not:view/has_activities">
+      <strong i18n:translate="">Contact has no activities.</strong>
+    </p>
+  </metal:block>
+</body>
+</html>

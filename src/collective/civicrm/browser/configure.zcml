@@ -29,4 +29,13 @@
       layer="..interfaces.IAddOnInstalled"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="civicrm-activities"
+      permission="zope2.View"
+      class=".activities.ActivitiesView"
+      template="activities.pt"
+      layer="..interfaces.IAddOnInstalled"
+      />
+
 </configure>

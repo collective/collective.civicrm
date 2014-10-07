@@ -64,6 +64,11 @@
               tal:attributes="href string:civicrm-relationships?contact_id=${request/contact_id}"
               i18n:translate="">Relationships</a><span><!-- spinner --></span>
         </div>
+        <div id="activities">
+          <a href=""
+              tal:attributes="href string:civicrm-activities?contact_id=${request/contact_id}"
+              i18n:translate="">Activities</a><span><!-- spinner --></span>
+        </div>
         <script>
             function getParameterByName(name) {
                 "use strict";
@@ -74,8 +79,10 @@
             }
 
             $("#relationships span").addClass("spinner");
+            $("#activities span").addClass("spinner");
             var contact_id = getParameterByName("contact_id");
             $("#relationships").load("civicrm-relationships #content table", {contact_id: contact_id});
+            $("#activities").load("civicrm-activities #content table", {contact_id: contact_id});
         </script>
       </div>
       <div tal:replace="structure provider:plone.belowcontentbody" />
