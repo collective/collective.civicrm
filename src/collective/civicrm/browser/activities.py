@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
-from collective.civicrm.config import DEBUG
+from collective.civicrm.config import INMEDIATE_TIMING
 from collective.civicrm.config import THREADS
 from collective.civicrm.config import TTL
-from collective.civicrm.logger import logger
-from collective.civicrm.timer import Timer
 from gevent.threadpool import ThreadPool
 from plone.memoize import ram
 from plone.memoize import view
+from profilehooks import timecall
 from time import time
 
 import gevent
@@ -49,6 +48,7 @@ class ActivitiesView(CiviCRMBaseView):
         """Return a cached list of activities of a contact."""
         return self._get_contact_activities(self.contact_id)
 
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_contact_activities(self, contact_id):
         """Return a list of activities of a contact. The list is sorted by
         activity_date_time in reverse order.
@@ -57,29 +57,21 @@ class ActivitiesView(CiviCRMBaseView):
         :type contact_id: int
         :returns: list of dictionaries with activities information
         """
-        if DEBUG:
-            count = self.civicrm.getcount('Activity')
-            logger.info(u'{0} Activity records in server'.format(count))
-        with Timer() as t:
-            # XXX: sorting should be done here instead; how?
-            activities = self.civicrm.get(
-                'Activity', contact_id=contact_id, limit=999)
-        logger.info(
-            u'get Activity API call took {0:.2n}s'.format(t.elapsed_secs))
+        # XXX: sorting should be done in the API call; how?
+        query = dict(contact_id=contact_id, limit=999)
+        activities = self.civicrm.get('Activity', **query)
         activities.sort(key=lambda a: a['activity_date_time'], reverse=True)
         return activities[:25]
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_contacts_by_activity(self):
         """Return a list of contacts on activities.
 
         :returns: dictionaries with contacts on each activity
         :rtype: dict
         """
-        with Timer() as t:
-            activities = self.civicrm.get('ActivityContact', limit=9999)
-        logger.info(
-            u'get ActivityContact API call took {0:.2n}s'.format(t.elapsed_secs))
+        activities = self.civicrm.get('ActivityContact', limit=9999)
         # simplify access by converting list of activities in a dictionary
         contacts = {}
         for a in activities:

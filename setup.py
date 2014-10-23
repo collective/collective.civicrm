@@ -48,6 +48,7 @@ setup(
         'Products.CMFPlone >=4.2',
         'Products.CMFQuickInstallerTool',
         'Products.GenericSetup',
+        'profilehooks',
         'requests',
         'setuptools',
         'zExceptions',

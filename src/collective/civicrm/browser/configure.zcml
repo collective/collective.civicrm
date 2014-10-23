@@ -2,6 +2,17 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser">
 
+  <include package="Products.CMFCore" file="permissions.zcml" />
+
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="civicrm-stats"
+      permission="cmf.ManagePortal"
+      class=".stats.StatsView"
+      template="stats.pt"
+      layer="..interfaces.IAddOnInstalled"
+      />
+
   <browser:page
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       name="civicrm-find-contacts"

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 PROJECTNAME = 'collective.civicrm'
 
-DEBUG = False
+INMEDIATE_TIMING = False  # show inmediate profiling information
 THREADS = 4  # number of concurrent API calls
 TIMEOUT = 5  # connection to CiviCRM server timeout in seconds
 TTL = 60 * 5  # number of seconds to cache some expensive API calls

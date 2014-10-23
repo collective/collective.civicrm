@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:metal="http://xml.zope.org/namespaces/metal"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    metal:use-macro="context/main_template/macros/master"
+    i18n:domain="collective.civicrm">
+
+  <metal:block fill-slot="content">
+    <table class="vertical listing">
+      <thead>
+        <tr>
+          <th i18n:translate="">Entity</th>
+          <th i18n:translate="">Records</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th i18n:translate="">Activity</th>
+          <td tal:content="view/Activity" />
+        </tr>
+        <tr>
+          <th i18n:translate="">Contact</th>
+          <td tal:content="view/Contact" />
+        </tr>
+        <tr>
+          <th i18n:translate="">ContactType</th>
+          <td tal:content="view/ContactType" />
+        </tr>
+        <tr>
+          <th i18n:translate="">Group</th>
+          <td tal:content="view/Group" />
+        </tr>
+        <tr>
+          <th i18n:translate="">GroupContact</th>
+          <td tal:content="view/GroupContact" />
+        </tr>
+        <tr>
+          <th i18n:translate="">Relationship</th>
+          <td tal:content="view/Relationship" />
+        </tr>
+        <tr>
+          <th i18n:translate="">RelationshipType</th>
+          <td tal:content="view/RelationshipType" />
+        </tr>
+        <tr>
+          <th i18n:translate="">Tag</th>
+          <td tal:content="view/Tag" />
+        </tr>
+      </tbody>
+    </table>
+  </metal:block>
+
+</html>

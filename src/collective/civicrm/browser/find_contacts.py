@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
-from collective.civicrm.config import DEBUG
+from collective.civicrm.config import INMEDIATE_TIMING
 from collective.civicrm.config import TTL
-from collective.civicrm.logger import logger
-from collective.civicrm.timer import Timer
 from plone.memoize import ram
 from plone.memoize import view
+from profilehooks import timecall
 from time import time
 
 
@@ -53,12 +52,15 @@ class FindContactsView(CiviCRMBaseView):
         # the API does not support filtering by group, nor by tag;
         # we have to deal with that here
         if self.group:
-            results = [i for i in results if self.filter_by_group(i, self.group)]
+            results = [
+                c for c in results if self.contact_in_group(c, self.group)]
         if self.tag:
-            results = [i for i in results if self.filter_by_tag(i, self.tag)]
+            results = [
+                c for c in results if self.contact_has_tag(c, self.tag)]
         return results
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _search_contacts(self):
         """Search for contacts that fullfil the query specified on the
         CiviCRM server. The search is limited to 9999 records and return
@@ -72,14 +74,7 @@ class FindContactsView(CiviCRMBaseView):
             'return': 'sort_name,city,email,phone',
             'limit': 9999,
         }
-        if DEBUG:
-            count = self.civicrm.getcount('Contact')
-            logger.info(u'{0} Contact records in server'.format(count))
-        with Timer() as t:
-            contacts = self.civicrm.get('Contact', **query)
-        logger.info(
-            u'get Contact API call took {0:.2n}s'.format(t.elapsed_secs))
-        return contacts
+        return self.civicrm.get('Contact', **query)
 
     @property
     @ram.cache(
@@ -89,19 +84,13 @@ class FindContactsView(CiviCRMBaseView):
         return self._search_contacts
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_contact_types(self):
         """Return contact types available on a CiviCRM server.
 
         :returns: list of dictionaries with contact type information
         """
-        if DEBUG:
-            count = self.civicrm.getcount('ContactType')
-            logger.info(u'{0} ContactType records in server'.format(count))
-        with Timer() as t:
-            results = self.civicrm.get('ContactType', limit=999)
-        logger.info(
-            u'get ContactType API call took {0:.2n}s'.format(t.elapsed_secs))
-        return results
+        return self.civicrm.get('ContactType', limit=999)
 
     @property
     @ram.cache(lambda *args: time() // TTL)
@@ -124,19 +113,13 @@ class FindContactsView(CiviCRMBaseView):
         return contact_types_options
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_groups(self):
         """Return groups available on a CiviCRM server.
 
         :returns: list of dictionaries with group information
         """
-        if DEBUG:
-            count = self.civicrm.getcount('Group')
-            logger.info(u'{0} Group records in server'.format(count))
-        with Timer() as t:
-            results = self.civicrm.get('Group', limit=999)
-        logger.info(
-            u'get Group API call took {0:.2n}s'.format(t.elapsed_secs))
-        return results
+        return self.civicrm.get('Group', limit=999)
 
     @property
     @ram.cache(lambda *args: time() // TTL)
@@ -158,18 +141,13 @@ class FindContactsView(CiviCRMBaseView):
         return groups
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_tags(self):
         """Return tags available on the CiviCRM server.
 
         :returns: list of dictionaries with tags
         """
-        if DEBUG:
-            count = self.civicrm.getcount('Tag')
-            logger.info(u'{0} Tag records in server'.format(count))
-        with Timer() as t:
-            results = self.civicrm.get('Tag', limit=999)
-        logger.info(u'get Tag API call took {0:.2n}s'.format(t.elapsed_secs))
-        return results
+        return self.civicrm.get('Tag', limit=999)
 
     @property
     @ram.cache(lambda *args: time() // TTL)
@@ -191,32 +169,24 @@ class FindContactsView(CiviCRMBaseView):
         return tags
 
     @ram.cache(lambda method, self, group: (time() // TTL, group))
+    @timecall(immediate=INMEDIATE_TIMING)
     def get_contacts_by_group(self, group):
         """Return the list of contacts on a group."""
-        if DEBUG:
-            count = self.civicrm.getcount('GroupContact')
-            logger.info(u'{0} GroupContact records in server'.format(count))
-        with Timer() as t:
-            contacts = self.civicrm.get(
-                'GroupContact', group_id=int(group), limit=999)
-        logger.info(
-            u'get GroupContact API call took {0:.2n}s'.format(t.elapsed_secs))
+        contacts = self.civicrm.get(
+            'GroupContact', group_id=int(group), limit=999)
         return [c['contact_id'] for c in contacts]
 
     @ram.cache(lambda method, self, tag: (time() // TTL, tag))
+    @timecall(immediate=INMEDIATE_TIMING)
     def get_contacts_with_tag(self, tag):
         """Return the list of contacts with the tag."""
-        with Timer() as t:
-            contacts = self.civicrm.get(
-                'EntityTag', tag_id=int(tag), limit=999)
-        logger.info(
-            u'get EntityTag API call took {0:.2n}s'.format(t.elapsed_secs))
+        contacts = self.civicrm.get('EntityTag', tag_id=int(tag), limit=999)
         return [c['entity_id'] for c in contacts]
 
-    def filter_by_group(self, contact, group):
+    def contact_in_group(self, contact, group):
         """Return True if the contact is in the group."""
         return contact['id'] in self.get_contacts_by_group(group)
 
-    def filter_by_tag(self, contact, tag):
+    def contact_has_tag(self, contact, tag):
         """Return True if the contact has the tag."""
         return contact['id'] in self.get_contacts_with_tag(tag)

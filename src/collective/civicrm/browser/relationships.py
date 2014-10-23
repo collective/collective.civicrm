@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
-from collective.civicrm.config import DEBUG
+from collective.civicrm.config import INMEDIATE_TIMING
 from collective.civicrm.config import THREADS
 from collective.civicrm.config import TTL
-from collective.civicrm.logger import logger
-from collective.civicrm.timer import Timer
 from gevent.threadpool import ThreadPool
 from plone.memoize import ram
 from plone.memoize import view
+from profilehooks import timecall
 from time import time
 
 import gevent
@@ -49,6 +48,7 @@ class RelationshipsView(CiviCRMBaseView):
         relationships = self.get_relationships_by_contact(self.contact_id)
         return self._resolve_relationships(relationships)
 
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_relationships_by_contact(self, contact_id):
         """Return a dictionary with 2 lists of active relationships of
         a contact on a CiviCRM server. Note that a contact can have
@@ -60,17 +60,11 @@ class RelationshipsView(CiviCRMBaseView):
         :type contact_id: int
         :returns: list of dictionaries with relationship information
         """
-        if DEBUG:
-            count = self.civicrm.getcount('Relationship')
-            logger.info(u'{0} Relationship records in server'.format(count))
         relationships = {}
-        with Timer() as t:
-            relationships = self.civicrm.get(
-                'Relationship', contact_id_a=contact_id, is_active=1, limit=999)
-            relationships.extend(self.civicrm.get(
-                'Relationship', contact_id_b=contact_id, is_active=1, limit=999))
-        logger.info(
-            u'2 get Relationship API calls took {0:.2n}s'.format(t.elapsed_secs))
+        relationships = self.civicrm.get(
+            'Relationship', contact_id_a=contact_id, is_active=1, limit=999)
+        relationships.extend(self.civicrm.get(
+            'Relationship', contact_id_b=contact_id, is_active=1, limit=999))
         return relationships
 
     @ram.cache(lambda method, self, contact_id: (time() // TTL, contact_id))
@@ -79,19 +73,13 @@ class RelationshipsView(CiviCRMBaseView):
         return self._get_relationships_by_contact(contact_id)
 
     @property
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_relationship_types(self):
         """Return the relationship types on a CiviCRM server.
 
         :returns: list of dictionaries with relationship type information
         """
-        if DEBUG:
-            count = self.civicrm.getcount('RelationshipType')
-            logger.info(u'{0} RelationshipType records in server'.format(count))
-        with Timer() as t:
-            types = self.civicrm.get('RelationshipType', limit=999)
-        logger.info(
-            u'get RelationshipType API call took {0:.2n}s'.format(t.elapsed_secs))
-        return types
+        return self.civicrm.get('RelationshipType', limit=999)
 
     @property
     @ram.cache(lambda *args: (time() // TTL))

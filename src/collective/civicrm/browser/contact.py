@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from collective.civicrm.browser.base import CiviCRMBaseView
-from collective.civicrm.config import DEBUG
+from collective.civicrm.config import INMEDIATE_TIMING
 from collective.civicrm.config import TTL
-from collective.civicrm.logger import logger
-from collective.civicrm.timer import Timer
 from plone.memoize import ram
 from plone.memoize import view
+from profilehooks import timecall
 from time import time
 
 
@@ -37,6 +36,7 @@ class ContactView(CiviCRMBaseView):
         """Return the information of the current contact."""
         return self.get_contact(self.contact_id)
 
+    @timecall(immediate=INMEDIATE_TIMING)
     def _get_groups_by_contact(self, contact_id):
         """Return the list of groups of a contact.
 
@@ -44,14 +44,8 @@ class ContactView(CiviCRMBaseView):
         :type contact_ids: int
         :returns: list of group names
         """
-        if DEBUG:
-            count = self.civicrm.getcount('GroupContact')
-            logger.info(u'{0} GroupContact records in server'.format(count))
-        with Timer() as t:
-            groups = self.civicrm.get(
-                'GroupContact', contact_id=contact_id, limit=999)
-        logger.info(
-            u'get GroupContact API call took {0:.2n}s'.format(t.elapsed_secs))
+        query = dict(contact_id=contact_id, limit=999)
+        groups = self.civicrm.get('GroupContact', **query)
         return [g['title'] for g in groups]
 
     @property
