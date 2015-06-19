@@ -7,4 +7,3 @@ omit =
     eggs/*
     parts/*
     src/collective/civicrm/pythoncivicrm.py
-    src/collective/civicrm/timer.py
